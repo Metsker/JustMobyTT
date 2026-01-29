@@ -51,7 +51,7 @@ namespace _Project.CodeBase.Core
         private void CreatePreviews()
         {
             foreach (Cube preview in _cubeFactory.CreateFromModels(_previewsScrollRect.content))
-                preview.Sm.SetState<PreviewState>();
+                preview.Fsm.SetState<PreviewState>();
         }
 
         private void OnApplicationPause(bool pauseStatus)

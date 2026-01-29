@@ -1,6 +1,6 @@
 ﻿namespace _Project.CodeBase.Core.Utils.Fsm
 {
-    public interface IPayloadState<in T> : IState
+    public interface IPayloadedState<in T>
     {
         void OnEnter(T payload);
     }

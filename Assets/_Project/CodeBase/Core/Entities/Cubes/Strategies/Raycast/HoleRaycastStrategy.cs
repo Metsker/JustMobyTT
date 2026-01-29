@@ -15,8 +15,12 @@ namespace _Project.CodeBase.Core.Entities.Cubes.Strategies.Raycast
         {
             if (result.gameObject.TryGetComponent(out Hole hole))
             {
-                owner.Sm.SetState(new FallingState<HoleState>(
-                    hole.transform.position.y, owner, () => actionLogger.Log(HoleDropKey)));
+                owner.Fsm.SetState<FallingState, FallingStatePayload>(new FallingStatePayload
+                {
+                    destinationY = hole.transform.position.y,
+                    nextState = typeof(HoleState),
+                    loggerKey = HoleDropKey,
+                });
                 return true;
             }
             return false;

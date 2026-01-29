@@ -16,7 +16,7 @@ namespace _Project.CodeBase.Core.Entities.Cubes.Strategies.Raycast.Fallback
 
         public override void Apply()
         {
-            owner.Sm.SetState<MissState>();
+            owner.Fsm.SetState<MissState>();
             actionLogger.Log(MissKey);
         }
     }

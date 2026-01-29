@@ -21,8 +21,12 @@ namespace _Project.CodeBase.Core.Entities.Cubes.Strategies.Raycast
                 towerFoundation.Next = owner;
                 owner.Prev = towerFoundation;
                 
-                owner.Sm.SetState(new FallingState<TowerState>(
-                    towerFoundation.transform.position.y, owner, () => actionLogger.Log(TowerPlacementFirstKey)));
+                owner.Fsm.SetState<FallingState, FallingStatePayload>(new FallingStatePayload
+                {
+                    destinationY = towerFoundation.transform.position.y,
+                    nextState = typeof(TowerState),
+                    loggerKey = TowerPlacementFirstKey,
+                });
                 return true;
             }
             return false;

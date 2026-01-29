@@ -10,7 +10,7 @@ namespace _Project.CodeBase.Core.Entities.Cubes
     {
         [SerializeField] private Image image;
 
-        public DraggableStateMachine Sm => _stateMachine;
+        public DraggableStateMachine Fsm => _stateMachine;
         public RectTransform RectTransform => (RectTransform)transform;
         public Bounds WorldBounds => CalcUnscaledWorldBounds();
         public int SpriteIndex { get; private set; }

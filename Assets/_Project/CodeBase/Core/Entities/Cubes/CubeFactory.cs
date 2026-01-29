@@ -52,11 +52,11 @@ namespace _Project.CodeBase.Core.Entities.Cubes
             // TODO: object pooling
             Cube owner = Object.Instantiate(_prefab, parent);
             
-            DraggableStateMachine sm = InitializeStateMachine(owner);
+            DraggableStateMachine fsm = InitializeStateMachine(owner);
 
             Sprite sprite = ModelsProvider.AtIndex(modelIndex).Sprite;
             
-            owner.Construct(sprite, modelIndex, sm);
+            owner.Construct(sprite, modelIndex, fsm);
             
             return owner;
         }
@@ -87,9 +87,12 @@ namespace _Project.CodeBase.Core.Entities.Cubes
             HoleState holeState = new (owner);
             AttributeInjector.Inject(holeState, _container);
             
+            FallingState fallingState = new (owner);
+            AttributeInjector.Inject(fallingState, _container);
+            
             return new DraggableStateMachine(new IState[]
             {
-                previewState, floatingState, towerState, missState, holeState
+                previewState, floatingState, towerState, missState, holeState, fallingState
             });
         }
         

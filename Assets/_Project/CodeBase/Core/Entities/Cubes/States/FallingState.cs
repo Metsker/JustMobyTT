@@ -2,39 +2,46 @@
 using _Project.CodeBase.Core.Entities.Cubes.States.Base;
 using _Project.CodeBase.Core.Utils;
 using _Project.CodeBase.Core.Utils.Fsm;
+using JetBrains.Annotations;
 using PrimeTween;
 using UnityEngine;
 
 namespace _Project.CodeBase.Core.Entities.Cubes.States
 {
-    public class FallingState<TNextState> : CubeStateBase where TNextState : IState
+    public struct FallingStatePayload
     {
-        private readonly Vector3 _destination;
-        private readonly Action _onExit;
-
-        public FallingState(Vector2 destination, Cube owner, Action onExit = null) : base(owner)
-        {
-            _destination = destination;
-            _onExit = onExit;
-        }
+        public Vector2 destination;
+        [CanBeNull] public float? destinationY;
         
-        public FallingState(float destinationY, Cube owner, Action onExit = null) : base(owner)
+        public Type nextState;
+        [CanBeNull] public string loggerKey;
+    }
+
+    public class FallingState : CubeStateBase, IPayloadedState<FallingStatePayload>
+    {
+        public FallingState(Cube owner) : base(owner)
         {
-            _destination = owner.transform.position.With(y: destinationY);
-            _onExit = onExit;
         }
 
-        public override void OnEnter()
+        public void OnEnter(FallingStatePayload payload)
         {
+            if (payload.destinationY != null)
+                payload.destination = owner.transform.position.With(y: payload.destinationY);
+            
+            Debug.Assert(payload.nextState != null);
+            
             Tween.PositionAtSpeed(
                     owner.transform,
-                    _destination,
+                    payload.destination,
                     tweenSettingsLib.fallSpeed,
                     tweenSettingsLib.fallEase)
-                .OnComplete(owner.Sm.SetState<TNextState>);
+                .OnComplete(() =>
+                {
+                    if (!string.IsNullOrEmpty(payload.loggerKey))
+                        actionLogger.Log(payload.loggerKey);
+                    
+                    owner.Fsm.SetState(payload.nextState);
+                });
         }
-        
-        public override void OnExit() =>
-            _onExit?.Invoke();
     }
 }

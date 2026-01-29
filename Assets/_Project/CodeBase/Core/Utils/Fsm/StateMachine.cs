@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace _Project.CodeBase.Core.Utils.Fsm
 {
@@ -16,21 +17,30 @@ namespace _Project.CodeBase.Core.Utils.Fsm
             _states = states.ToDictionary(state => state.GetType());
         }
         
-        public void SetState<TState>() where TState : T =>
-            SetState(_states[typeof(TState)]);
+        public void SetState<TState>() where TState : T => SetState(typeof(TState));
 
-        /*public void SetState<TState, TPayload>(TPayload payload) where TState : T, IPayloadState<TPayload>
+        public void SetState<TState, TPayload>(TPayload payload) where TState : T, IPayloadedState<TPayload>
         {
-            currentState?.OnExit();
-            currentState = _states[typeof(TState)];
-            ((IPayloadState<TPayload>)currentState).OnEnter(payload);
-        }*/
+            SetState<TState>();
+            
+            if (currentState is IPayloadedState<TPayload> payloadedState)
+                payloadedState.OnEnter(payload);
+            
+        }
 
-        public void SetState(T state)
+        public void SetState(Type stateType)
         {
+            Debug.Assert(typeof(T).IsAssignableFrom(stateType));
+            
             currentState?.OnExit();
-            currentState = state;
-            currentState.OnEnter();
+            
+            if (_states.TryGetValue(stateType, out T state))
+            {
+                currentState = state;
+                currentState.OnEnter();
+            }
+            else
+                Debug.LogError("No state with type " + stateType);
         }
     }
 }

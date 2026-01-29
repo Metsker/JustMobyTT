@@ -1,15 +1,16 @@
 ﻿using _Project.CodeBase.Core.Data.Tweens;
-using Reflex.Core;
+using _Project.CodeBase.Core.Logger;
+using Reflex.Attributes;
 
 namespace _Project.CodeBase.Core.Entities.Cubes.States.Base
 {
     public abstract class CubeStateBase : MonoStateBase<Cube>
     {
-        protected readonly TweenSettingsLibrary tweenSettingsLib;
+        [Inject] protected TweenSettingsLibrary tweenSettingsLib;
+        [Inject] protected IActionLogger actionLogger;
 
         protected CubeStateBase(Cube owner) : base(owner)
         {
-            tweenSettingsLib = Container.RootContainer.Resolve<TweenSettingsLibrary>();
         }
     }
 }

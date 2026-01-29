@@ -35,7 +35,7 @@ namespace _Project.CodeBase.Core.Entities
                 Cube cube = _cubeFactory.Create(nodeData.modelIndex);
                 
                 cube.transform.position = nodeData.position;
-                cube.Sm.SetState<TowerState>();
+                cube.Fsm.SetState<TowerState>();
                 
                 cube.Prev = node;
                 node.Next = cube;

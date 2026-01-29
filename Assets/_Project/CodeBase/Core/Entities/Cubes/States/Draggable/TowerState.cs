@@ -1,7 +1,6 @@
 ﻿using _Project.CodeBase.Core.Entities.Cubes.States.Base;
 using _Project.CodeBase.Core.Logger;
 using _Project.CodeBase.Core.Utils;
-using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,8 +8,6 @@ namespace _Project.CodeBase.Core.Entities.Cubes.States.Draggable
 {
     public class TowerState : CubeDraggableStateBase
     {
-        [Inject] protected IActionLogger actionLogger;
-        
         public TowerState(Cube owner) : base(owner)
         {
         }
@@ -30,7 +27,7 @@ namespace _Project.CodeBase.Core.Entities.Cubes.States.Draggable
         {
             PokeTree();
             
-            owner.Sm.SetState<FloatingState>();
+            owner.Fsm.SetState<FloatingState>();
         }
 
         private void PokeTree()
@@ -49,7 +46,11 @@ namespace _Project.CodeBase.Core.Entities.Cubes.States.Draggable
             while (nextNode != null && i < max)
             {
                 if (node is Cube cube && nextNode is Cube nextCube)
-                    nextCube.Sm.SetState(new FallingState<TowerState>(cube.transform.position.y, nextCube));
+                    nextCube.Fsm.SetState<FallingState, FallingStatePayload>(new FallingStatePayload
+                    {
+                        destinationY = cube.transform.position.y,
+                        nextState = typeof(TowerState)
+                    });
                 
                 node = nextNode;
                 nextNode = node.Next;
@@ -71,7 +72,7 @@ namespace _Project.CodeBase.Core.Entities.Cubes.States.Draggable
             while (node != null)
             {
                 if (node is Cube cube)
-                    cube.Sm.SetState<MissState>();
+                    cube.Fsm.SetState<MissState>();
                 
                 node.Prev.Next = null;
                 node = node.Next;

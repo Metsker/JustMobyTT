@@ -19,14 +19,14 @@ namespace _Project.CodeBase.Core.Entities.Cubes.Strategies.Raycast
         public override bool TryApply(RaycastResult result)
         {
             if (result.gameObject.TryGetComponent(out Cube cube) &&
-                cube.Sm.CurrentState is TowerState &&
+                cube.Fsm.CurrentState is TowerState &&
                 cube.Next == null &&
                 owner.transform.position.y > cube.transform.position.y + cube.WorldBounds.size.y)
             {
                 if (result.screenPosition.y + cube.RectTransform.rect.height > Screen.height)
                 {
                     actionLogger.Log(HeightLimitKey);
-                    owner.Sm.SetState<MissState>();
+                    owner.Fsm.SetState<MissState>();
                     return true;
                 }
                 
@@ -39,9 +39,12 @@ namespace _Project.CodeBase.Core.Entities.Cubes.Strategies.Raycast
 
                 Vector2 pos = AdjustedDestination(cubeHit, hit);
                 
-                owner.Sm.SetState(new FallingState<TowerState>(
-                    pos, owner, () => actionLogger.Log(TowerPlacementKey)));
-                
+                owner.Fsm.SetState<FallingState, FallingStatePayload>(new FallingStatePayload
+                {
+                    destination = pos,
+                    nextState = typeof(TowerState),
+                    loggerKey = TowerPlacementKey,
+                });
                 return true;
             }
             return false;

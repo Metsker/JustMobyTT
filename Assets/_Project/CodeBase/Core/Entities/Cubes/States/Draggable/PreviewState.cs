@@ -36,7 +36,7 @@ namespace _Project.CodeBase.Core.Entities.Cubes.States.Draggable
             if (_passDrag)
                 _scroll.OnDrag(eventData);
             else
-                copy.Sm.OnDrag(eventData);
+                copy.Fsm.OnDrag(eventData);
         }
 
         public override void OnEndDrag(PointerEventData eventData)
@@ -44,14 +44,14 @@ namespace _Project.CodeBase.Core.Entities.Cubes.States.Draggable
             if (_passDrag)
                 _scroll.OnEndDrag(eventData);
             else
-                copy.Sm.OnEndDrag(eventData);
+                copy.Fsm.OnEndDrag(eventData);
         }
 
         private void CreateCopy(PointerEventData eventData)
         {
             copy = _factory.Create(owner.SpriteIndex);
-            copy.Sm.SetState<FloatingState>();
-            copy.Sm.OnBeginDrag(eventData);
+            copy.Fsm.SetState<FloatingState>();
+            copy.Fsm.OnBeginDrag(eventData);
         }
     }
 }
